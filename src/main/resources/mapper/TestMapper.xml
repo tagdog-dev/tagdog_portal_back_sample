@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.tagdog.portal.mapper.TestMapper">
+
+    <resultMap id="testResultMap" type="map">
+        <id property="idx" column="system_license_idx"/>
+        <result property="ucwareProductImageIdx" column="ucware_product_image_idx"/>
+        <collection property="priceList" resultMap="systemPriceResultMap" ofType="systemPrice"
+                    javaType="java.util.List" autoMapping="false"/>
+    </resultMap>
+
+    <select id="test" resultType="map">
+        SELECT *
+        FROM idea
+    </select>
+
+</mapper>

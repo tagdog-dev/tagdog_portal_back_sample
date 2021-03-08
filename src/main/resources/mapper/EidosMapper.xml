@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.tagdog.portal.mapper.EidosMapper">
+
+    <resultMap id="eidosWithRelationHyleIdeaAttrMap" type="map">
+        <id property="eidosIdx" column="eidosIdx"/>
+        <result property="restCode" column="restCode" />
+        <result property="name" column="name" />
+        <result property="insDate" column="insDate" />
+        <collection columnPrefix="R_" property="relation" ofType="map"  javaType="List">
+            <id property="relationIdx" column="relationIdx" />
+            <id property="eidosObjIdx" column="eidosObjIdx" />
+            <id property="eidosObjName" column="eidosObjName" />
+            <id property="eidosSubIdx" column="eidosSubIdx" />
+            <id property="eidosSubName" column="eidosSubName" />
+            <result property="insDate" column="insDate" />
+            <collection columnPrefix="H_" property="hyle" ofType="map"  javaType="List">
+                <id property="hyleIdx" column="hyleIdx" />
+                <result property="key" column="key" />
+                <result property="value" column="value" />
+            </collection>
+        </collection>
+    </resultMap>
+
+    <sql id="eidos">
+		A.eidos_idx as eidosIdx,
+		A.idea_idx as ideaIdx,
+		A.rest_code as restCode,
+		A.name as `name`,
+		A.revision as revision,
+		A.ins_date as `insDate`
+	</sql>
+
+    <sql id="eidosWithRelationHyleIdeaAttr">
+		A.eidos_idx as eidosIdx,
+		A.rest_code as restCode,
+		A.name as `name`,
+		A.ins_date as `insDate`,
+		B.relation_idx as R_relationIdx,
+		B.eidos_obj_idx as R_eidosObjIdx,
+		B.eidos_sub_idx as R_eidosSubIdx,
+		B.ins_date as R_insDate,
+		C.hyle_idx as R_H_hyleIdx,
+		C.value as R_H_value,
+		D.key as R_H_key,
+		I.name as R_eidosObjName,
+		J.name as R_eidosSubName
+	</sql>
+
+    <select id="test" resultType="eidos">
+        SELECT
+        <include refid="eidos" />
+        FROM eidos A
+    </select>
+
+    <select id="chkDuplication" resultType="int">
+        SELECT COUNT(*)
+        FROM eidos A
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            AND A.del_flag = 'N'
+            AND idea_idx = ${ideaIdx}
+            AND name = #{name}
+        </trim>
+    </select>
+
+    <insert id="insertOne" parameterType="eidos" keyProperty="eidosIdx" useGeneratedKeys="true">
+        INSERT INTO eidos
+        ( idea_idx, rest_code, name)
+        VALUES
+        (${ideaIdx}, #{restCode}, #{name})
+    </insert>
+
+    <select id="selectOne" parameterType="eidos" resultType="eidos">
+        SELECT
+        <include refid="eidos" />
+        FROM eidos A
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            AND A.del_flag = 'N'
+            <if test="eidosIdx != null and eidosIdx != '' ">AND eidos_idx = ${eidosIdx}</if>
+        </trim>
+    </select>
+
+    <select id="selectOneWithRelationHyleIdeaAttr" parameterType="eidos" resultMap="eidosWithRelationHyleIdeaAttrMap">
+        SELECT
+        <include refid="eidosWithRelationHyleIdeaAttr" />
+        FROM eidos A
+        JOIN relation B ON B.eidos_sub_idx = A. eidos_idx
+        JOIN hyle C ON C.relation_idx = B.relation_idx
+        JOIN idea_attr D ON D.idea_attr_idx = C.idea_attr_idx
+        JOIN eidos I ON I.eidos_idx = B.eidos_obj_idx
+        JOIN eidos J ON J.eidos_idx = B.eidos_sub_idx
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            AND A.del_flag = 'N'
+            AND B.del_flag = 'N'
+            AND D.del_flag = 'N'
+            AND D.secret != 'ALL'
+            <if test="eidosIdx != null and eidosIdx != '' ">AND A.eidos_idx = ${eidosIdx}</if>
+        </trim>
+    </select>
+
+</mapper>

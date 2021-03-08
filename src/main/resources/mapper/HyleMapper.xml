@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.tagdog.portal.mapper.HyleMapper">
+
+    <sql id="hyle">
+		A.hyle_idx as hyleIdx,
+		A.relation_idx as relationIdx,
+		A.idea_attr_idx as ideaAttrIdx,
+		A.rest_code as restCode,
+		A.value as `value`
+	</sql>
+
+    <insert id="insertOne" parameterType="hyle" keyProperty="hyleIdx" useGeneratedKeys="true">
+        INSERT INTO hyle
+        ( relation_idx, idea_attr_idx, rest_code, `value`)
+        VALUES
+        (${relationIdx}, ${ideaAttrIdx}, CONCAT(#{restCode},func_make_key(24, true, true, true, 0)), #{value})
+    </insert>
+
+    <select id="test" resultType="Hyle">
+        SELECT
+        <include refid="hyle" />
+        FROM hyle A
+    </select>
+
+    <select id="selectOne" parameterType="Hyle" resultType="Hyle">
+        SELECT
+        <include refid="hyle" />
+        FROM hyle A
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            AND A.del_flag = 'N'
+            <if test="hyleIdx != null and hyleIdx != '' ">AND hyle_idx = ${hyleIdx}</if>
+        </trim>
+    </select>
+
+</mapper>

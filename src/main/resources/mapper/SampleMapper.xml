@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.tagdog.portal.mapper.SampleMapper">
+
+    <resultMap id="sampleResultMap" type="map">
+        <id property="sampleIdx" column="sample_idx"/>
+        <result property="restCode" column="restCode"/>
+        <result property="sampleData" column="sampleData"/>
+    </resultMap>
+
+    <sql id="sampleSelect">
+        s.sample_idx as sampleIdx,
+		s.rest_code as restCode,
+		s.sample_data as sampleData,
+		s.ins_date as insDate,
+		s.upd_date as updDate,
+        s.del_date as delDate
+    </sql>
+
+    <sql id="sampleWhere">
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="delFlag != null and delFlag != '' ">AND s.del_flag = ${delFlag}</if>
+            <if test="sampleIdx != null and sampleIdx != '' ">AND s.sample_idx = ${sampleIdx}</if>
+            <if test="restCode != null and restCode != '' ">AND s.rest_code = ${restCode}</if>
+        </trim>
+    </sql>
+
+    <insert id="insertSampleSingle" parameterType="Sample">
+        INSERT INTO sample s
+            ( rest_code, sample_data )
+        VALUES
+            ( ${restCode}, ${sampleData} )
+    </insert>
+
+    <select id="selectSampleSingle" parameterType="Sample" resultType="Sample">
+        SELECT
+            <include refid="sampleSelect" />
+        FROM hyle A
+        <include refid="sampleWhere" />
+    </select>
+
+    <update id="selectSampleSingle" parameterType="Sample">
+        UPDATE
+            sample
+        SET
+            sample_data = #{sampleData}
+        <include refid="sampleWhere" />
+    </update>
+
+    <update id="deleteSampleSingle" parameterType="Sample">
+        UPDATE
+            sample
+        SET
+            del_flag = 'Y'
+        <include refid="sampleWhere" />
+    </update>
+
+    <delete id="eraseSampleSingle" parameterType="Sample">
+        DELETE FROM
+            sample
+        <include refid="sampleWhere" />
+    </delete>
+
+</mapper>

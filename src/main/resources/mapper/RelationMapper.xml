@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.tagdog.portal.mapper.RelationMapper">
+
+    <sql id="relation">
+		A.relation_idx as relationIdx,
+		A.eidos_obj_idx as eidosObjIdx,
+		A.eidos_sub_idx as eidosSubIdx,
+		A.rest_code as restCode,
+		A.ins_date as `insDate`
+	</sql>
+
+    <select id="test" resultType="Relation">
+        SELECT
+        <include refid="relation" />
+        FROM relation A
+    </select>
+
+    <insert id="insertOne" parameterType="relation" keyProperty="relationIdx" useGeneratedKeys="true">
+        INSERT INTO relation
+        ( eidos_obj_idx, eidos_sub_idx, rest_code)
+        VALUES
+        (${eidosObjIdx}, ${eidosSubIdx}, CONCAT(#{restCode},func_make_key(24, true, true, true, 0)))
+    </insert>
+
+    <select id="selectOne" parameterType="Relation" resultType="Relation">
+        SELECT
+        <include refid="relation" />
+        FROM relation A
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            AND A.del_flag = 'N'
+            <if test="relationIdx != null and relationIdx != '' ">AND relation_idx = ${relationIdx}</if>
+        </trim>
+    </select>
+
+</mapper>
