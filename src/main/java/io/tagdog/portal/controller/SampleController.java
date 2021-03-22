@@ -44,6 +44,7 @@ public class SampleController {
 
     @PutMapping( value = "" )
     public Result updateSampleSingleApi( @RequestBody Sample sample ) {
+        //
         return sampleService.updateSampleSingleApi( sample );
     }
 
