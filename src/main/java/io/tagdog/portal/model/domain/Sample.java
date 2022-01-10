@@ -9,10 +9,12 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.apache.ibatis.type.Alias;
 
 /**
  *   Sample
  */
+@Alias("sample")
 @Data
 @Builder
 @AllArgsConstructor
@@ -20,14 +22,22 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Sample {
 
-    private long id;
+    private long idx;
+
+    private String id;
 
     private String nm;
 
-    private String cn;
+    private String dc;
 
-	private String registerId, updusrId;
+    private String tyCode;
+
+    private boolean useAt;
+
+	private String regId, updId;
 
 	@JsonFormat(pattern="yyyy-MM-dd hh:mm:ss")
-	private Date registDt, updtDt;
+	private Date regDt, updDt;
+
+    private boolean delAt;
 }

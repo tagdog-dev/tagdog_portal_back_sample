@@ -4,6 +4,7 @@ import io.tagdog.portal.mapper.SampleMapper;
 import io.tagdog.portal.model.domain.Sample;
 import io.tagdog.portal.model.enums.ResultStatus;
 import io.tagdog.portal.model.vo.Result;
+import io.tagdog.portal.model.vo.Search;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service("sampleService")
@@ -25,15 +27,15 @@ public class SampleService {
 	private static final Logger LOGGER = LoggerFactory.getLogger( SampleService.class );
 
 
-	/************ INJECTION ************/
+	/* INJECTION */
 
 	@Resource
 	private SampleMapper sampleMapper;
 
 
-	/************ SERVICE METHOD : Service business logic ************/
+	/* SERVICE METHOD : Service business logic */
 
-	/****** INSERT ******/
+	/* INSERT */
 
 	/**
 	 * @param sample insert sample data
@@ -44,7 +46,7 @@ public class SampleService {
 		else return null;
 	}
 
-	/****** SELECT ******/
+	/* SELECT */
 
 	/**
 	 * @param sample select sample data
@@ -54,7 +56,23 @@ public class SampleService {
 		return sampleMapper.selectMono( sample );
 	}
 
-	/****** UPDATE ******/
+	/**
+	 * @param search select sample data
+	 * @return select sample data
+	 */
+	public List<Sample> selectFlux( Search<Sample> search ) {
+		return sampleMapper.selectFlux( search );
+	}
+
+	/**
+	 * @param search select sample data
+	 * @return select sample data
+	 */
+	public int selectFluxCount( Search<Sample> search ) {
+		return sampleMapper.selectFluxCount( search );
+	}
+
+	/* UPDATE */
 
 	/**
 	 * @param sample update sample data
@@ -65,7 +83,16 @@ public class SampleService {
 		else return null;
 	}
 
-	/****** DELETE : update delete_flag ******/
+	/**
+	 * @param sample update sample data
+	 * @return update sample data
+	 */
+	public Sample updateMonoDelAt( Sample sample ) {
+		if ( sampleMapper.updateMonoDelAt( sample ) > 0 ) return sample;
+		else return null;
+	}
+
+	/* DELETE : update delete_flag */
 
 	/**
 	 * @param sample delete sample data
@@ -77,113 +104,129 @@ public class SampleService {
 	}
 
 
-	/************ API METHOD : API end-point business logic ******/
+	/* API METHOD : API end-point business logic */
 
-	/****** INSERT ******/
+	/* INSERT */
 
 	/**
 	 * @param sample insert sample data
 	 * @return result
 	 */
 	public Result insertMonoHandler( Sample sample ) {
-		/*** init Object ***/
-		Map<String, Object> data = new HashMap<String, Object>();
+		/* init Object */
+		Map<String, Object> data = new HashMap<>();
 
-		/*** validation check : request ***/
+		/* validation check : request */
 		if ( ObjectUtils.isEmpty( sample ) ) return Result.builder().status( ResultStatus.INVALID_INPUT_VALUE ).build();
 
-		/*** business logic ***/
+		/* business logic */
 		data.put( "sample", this.insertMono( sample ) );
-		/*** validation check : response ***/
+		/* validation check : response */
 		if ( ObjectUtils.isEmpty( data.get( "sample" ) ) ) return Result.builder().status( ResultStatus.SYSTEM_ERROR ).build();
 
-		/*** return ***/
+		/* return */
 		return Result.builder().status( ResultStatus.SUCCESS ).data( data ).build();
 	}
 
-	/****** SELECT ******/
+	/* SELECT */
 
 	/**
 	 * @param sample select sample data
 	 * @return result
 	 */
 	public Result selectMonoHandler( Sample sample ) {
-		/*** init Object ***/
-		Map<String, Object> data = new HashMap<String, Object>();
+		/* init Object */
+		Map<String, Object> data = new HashMap<>();
 
-		/*** validation check : request ***/
+		/* validation check : request */
 		if ( ObjectUtils.isEmpty( sample ) ) return Result.builder().status( ResultStatus.INVALID_INPUT_VALUE ).build();
 
-		/*** business logic ***/
-		data.put( "idea", this.selectMono( sample ) );
-		/*** validation check : response ***/
-		if ( ObjectUtils.isEmpty( data.get( "sample" ) ) ) return Result.builder().status( ResultStatus.SYSTEM_ERROR ).build();
+		/* business logic */
+		data.put( "mono", this.selectMono( sample ) );
+		/* validation check : response */
+		if ( ObjectUtils.isEmpty( data.get( "mono" ) ) ) return Result.builder().status( ResultStatus.SYSTEM_ERROR ).build();
 
-		/*** return ***/
+		/* return */
 		return Result.builder().status( ResultStatus.SUCCESS ).data( data ).build();
 	}
 
 	/**
-	 * @param sample select sample data
+	 * @param search select sample data
 	 * @return result
 	 */
-	public Result selectFluxHandler( Sample sample ) {
-		/*** init Object ***/
-		Map<String, Object> data = new HashMap<String, Object>();
+	public Result selectFluxHandler( Search<Sample> search ) {
+		/* init Object */
+		Map<String, Object> data = new HashMap<>();
 
-		/*** validation check : request ***/
-		if ( ObjectUtils.isEmpty( sample ) ) return Result.builder().status( ResultStatus.INVALID_INPUT_VALUE ).build();
+		/* validation check : request */
+		if ( ObjectUtils.isEmpty( search ) ) return Result.builder().status( ResultStatus.INVALID_INPUT_VALUE ).build();
 
-		/*** business logic ***/
-		data.put( "idea", this.selectMono( sample ) );
-		/*** validation check : response ***/
-		if ( ObjectUtils.isEmpty( data.get( "sample" ) ) ) return Result.builder().status( ResultStatus.SYSTEM_ERROR ).build();
+		/* business logic */
+		data.put( "flux", this.selectFlux( search ) );
 
-		/*** return ***/
+		/* return */
 		return Result.builder().status( ResultStatus.SUCCESS ).data( data ).build();
 	}
 
-	/****** UPDATE ******/
+	/**
+	 * @param search select sample data
+	 * @return result
+	 */
+	public Result selectFluxCountHandler( Search<Sample> search ) {
+		/* init Object */
+		Map<String, Object> data = new HashMap<>();
+
+		/* validation check : request */
+		if ( ObjectUtils.isEmpty( search ) ) return Result.builder().status( ResultStatus.INVALID_INPUT_VALUE ).build();
+
+		/* business logic */
+		data.put( "count", this.selectFluxCount( search ) );
+
+		/* return */
+		return Result.builder().status( ResultStatus.SUCCESS ).data( data ).build();
+	}
+
+	/* UPDATE */
 
 	/**
 	 * @param sample update sample data
 	 * @return result
 	 */
 	public Result updateMonoHandler( Sample sample ) {
-		/*** init Object ***/
-		Map<String, Object> data = new HashMap<String, Object>();
+		/* init Object */
+		Map<String, Object> data = new HashMap<>();
 
-		/*** validation check : request ***/
+		/* validation check : request */
 		if ( ObjectUtils.isEmpty( sample ) ) return Result.builder().status( ResultStatus.INVALID_INPUT_VALUE ).build();
 
-		/*** business logic ***/
-		data.put( "idea", this.updateMono( sample ) );
-		/*** validation check : response ***/
+		/* business logic */
+		data.put( "mono", this.updateMono( sample ) );
+		/* validation check : response */
 		if ( ObjectUtils.isEmpty( data.get( "sample" ) ) ) return Result.builder().status( ResultStatus.SYSTEM_ERROR ).build();
 
-		/*** return ***/
+		/* return */
 		return Result.builder().status( ResultStatus.SUCCESS ).data( data ).build();
 	}
 
-	/****** DELETE : update delete_flag ******/
+	/* DELETE */
 
 	/**
 	 * @param sample delete sample data
 	 * @return result
 	 */
 	public Result deleteMonoHandler( Sample sample ) {
-		/*** init Object ***/
-		Map<String, Object> data = new HashMap<String, Object>();
+		/* init Object */
+		Map<String, Object> data = new HashMap<>();
 
-		/*** validation check : request ***/
+		/* validation check : request */
 		if ( ObjectUtils.isEmpty( sample ) ) return Result.builder().status( ResultStatus.INVALID_INPUT_VALUE ).build();
 
-		/*** business logic ***/
-		data.put( "idea", this.deleteMono( sample ) );
-		/*** validation check : response ***/
-		if ( ObjectUtils.isEmpty( data.get( "sample" ) ) ) return Result.builder().status( ResultStatus.SYSTEM_ERROR ).build();
+		/* business logic */
+		data.put( "mono", this.deleteMono( sample ) );
+		/* validation check : response */
+		if ( ObjectUtils.isEmpty( data.get( "mono" ) ) ) return Result.builder().status( ResultStatus.SYSTEM_ERROR ).build();
 
-		/*** return ***/
+		/* return */
 		return Result.builder().status( ResultStatus.SUCCESS ).data( data ).build();
 	}
 

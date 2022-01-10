@@ -29,18 +29,18 @@ public class DbConfig {
 
     @Bean(name="sqlSessionFactory")
     @Primary
-    public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception{
+    public SqlSessionFactory sqlSessionFactory( @Qualifier("dataSource") DataSource dataSource ) throws Exception{
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        sqlSessionFactoryBean.setTypeAliasesPackage("io.tagdog.portal");
-        sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath:mapper/*.xml"));
+        sqlSessionFactoryBean.setTypeAliasesPackage( "io.tagdog.portal" );
+        sqlSessionFactoryBean.setMapperLocations( resolver.getResources( "classpath:mapper/*.xml" ) );
         return sqlSessionFactoryBean.getObject();
     }
 
     @Bean(name="sqlSessionTemplate")
     @Primary
-    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) throws Exception {
-        return new SqlSessionTemplate(sqlSessionFactory);
+    public SqlSessionTemplate sqlSessionTemplate( SqlSessionFactory sqlSessionFactory ) {
+        return new SqlSessionTemplate( sqlSessionFactory );
     }
 }

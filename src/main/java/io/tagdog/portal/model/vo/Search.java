@@ -7,27 +7,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.Alias;
 
+import java.util.List;
 import java.util.Map;
 
-@Alias("result")
+@Alias("search")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Result {
+public class Search<T> {
 
-	private ResultStatus status;
+	private String pagingTy;
 
-	private Map<String, Object> data;
+	private int firstIndex = 0;
+	private int lastIndex = 0;
+	private int recordCountPerPage;
 
-	public Result isSuccess() {
-		this.status = ResultStatus.SUCCESS;
-		return this;
-	}
-
-	public Result isFailed() {
-		this.status = ResultStatus.FAILED;
-		return this;
-	}
+	private Map<String, Object> option;
+	private T mono;
+	private List<T> flux;
 
 }
