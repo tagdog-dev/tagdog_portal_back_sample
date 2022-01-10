@@ -15,56 +15,47 @@ public class SampleController {
 
     /************ INJECTION ************/
 
-    @Autowired
-    private SampleService sampleService;
+    private final SampleService sampleService;
+
+    public SampleController(SampleService sampleService) {
+        this.sampleService = sampleService;
+    }
 
 
     /****** INSERT ******/
 
     @PostMapping( value = "" )
-    public Result insertSampleSingleApi( @RequestBody Sample sample ) {
-        return sampleService.insertSampleSingleApi( sample );
+    public Result insertMonoHandler( @RequestBody Sample sample ) {
+        return sampleService.insertMonoHandler( sample );
     }
 
 
     /****** SELECT ******/
 
-//    @GetMapping( value = "/idx/{idx}" )
-//    public Result selectSampleSingleApi( @PathVariable( "sampleIdx" ) long sampleIdx ) {
-//        return sampleService.selectSampleSingleApi( Sample.builder().sampleIdx( sampleIdx ).build() );
-//    }
+    @GetMapping( value = "/id/{id}" )
+    public Result selectMonoHandler( @PathVariable( "id" ) long id ) {
+        return sampleService.selectMonoHandler( Sample.builder().id( id ).build() );
+    }
 
-    @GetMapping( value = "/restcode/{restCode}" )
-    public Result selectSampleSingleApi( @PathVariable( "restCode" ) String restCode ) {
-        return sampleService.selectSampleSingleApi( Sample.builder().restCode( restCode ).build() );
+    @PostMapping( value = "" )
+    public Result selectFluxHandler( @RequestBody Sample sample ) {
+        return sampleService.selectFluxHandler( sample );
     }
 
 
     /****** UPDATE ******/
 
-    @PutMapping( value = "" )
-    public Result updateSampleSingleApi( @RequestBody Sample sample ) {
-        //
-        return sampleService.updateSampleSingleApi( sample );
+    @PatchMapping( value = "" )
+    public Result updateMonoHandler( @RequestBody Sample sample ) {
+        return sampleService.updateMonoHandler( sample );
     }
 
 
     /****** DELETE ******/
 
-//    @DeleteMapping( value = "/idx/{idx}" )
-//    public Result deleteSampleSingleFromIdxApi( @PathVariable( "sampleIdx" ) long sampleIdx ) {
-//        return sampleService.deleteSampleSingleApi( Sample.builder().sampleIdx( sampleIdx ).build() );
-//    }
-
-//    @DeleteMapping( value = "/idx/{idx}/force" )
-//    public Result eraseSampleSingleFromIdxApi( @PathVariable( "sampleIdx" ) long sampleIdx ) {
-//        return sampleService.eraseSampleSingleApi( Sample.builder().sampleIdx( sampleIdx ).build() );
-//    }
-
-    @DeleteMapping( value = "/restCode/{restCode}" )
-    public Result deleteSampleSingleFromRestCodeApi( @PathVariable( "restCode" ) String restCode ) {
-        return sampleService.deleteSampleSingleApi( Sample.builder().restCode( restCode ).build() );
+    @DeleteMapping( value = "/id/{id}" )
+    public Result deleteMonoHandler( @PathVariable( "id" ) long id ) {
+        return sampleService.deleteMonoHandler( Sample.builder().id( id ).build() );
     }
-
 
 }

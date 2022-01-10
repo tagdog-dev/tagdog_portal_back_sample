@@ -1,35 +1,33 @@
 package io.tagdog.portal.model.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.ibatis.type.Alias;
-
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+/**
+ *   Sample
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude( JsonInclude.Include.NON_NULL )
-@Alias( "Sample" )
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Sample {
 
-    // pk
-    private long sampleIdx;
+    private long id;
 
-    // restCode
-    private String restCode;
+    private String nm;
 
-    // data
-    private String sampleData;
+    private String cn;
 
-    // common
-    @JsonFormat(pattern="yyyy-MM-dd hh:mm:ss")
-    private Date insDate, updDate, delDate;
-    private String delFlag;
+	private String registerId, updusrId;
 
+	@JsonFormat(pattern="yyyy-MM-dd hh:mm:ss")
+	private Date registDt, updtDt;
 }
